@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Primary Meta -->
+  <title>BE Function Generator</title>
+  <meta name="description" content="Minecraft Bedrock Edition のビヘイビアパック用 Function ファイルを簡単に作成・管理・エクスポートできるツールです。">
+  <meta name="author" content="BE Function Generator">
+  <meta name="theme-color" content="#0D1117">
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website">
+  <meta property="og:title"       content="BE Function Generator">
+  <meta property="og:description" content="Minecraft Bedrock Edition のビヘイビアパック用 Function ファイルを簡単に作成・管理・エクスポートできるツール。">
+  <meta property="og:image"       content="icons/pack-default.svg">
+  <meta property="og:locale"      content="ja_JP">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="BE Function Generator">
+  <meta name="twitter:description" content="Minecraft Bedrock Edition の Function パックを簡単作成">
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="icons/pickaxe.svg" type="image/svg+xml">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav id="sidebar" aria-label="サイドメニュー">
+  <div class="sidebar-header">
+    <div class="sidebar-app-icon">
+      <span class="icon icon-text" style="width:18px;height:18px;">
+        <img src="icons/pickaxe.svg" width="18" height="18" alt="">
+      </span>
+    </div>
+    <div class="sidebar-titles">
+      <div class="sidebar-title">BE Function Gen</div>
+      <div class="sidebar-sub">Bedrock Edition</div>
+    </div>
+  </div>
+
+  <button class="sidebar-new-btn" id="sidebar-new-btn">
+    <span class="icon icon-text" style="width:14px;height:14px;">
+      <img src="icons/plus.svg" width="14" height="14" alt="">
+    </span>
+    新規プロジェクト
+  </button>
+
+  <div class="sidebar-section">プロジェクト</div>
+  <div id="project-list"></div>
+</nav>
+<div id="overlay"></div>
+
+<!-- ===== TOPBAR ===== -->
+<header id="topbar">
+  <button id="hamburger" aria-label="メニューを開く">
+    <span class="icon icon-muted" style="width:18px;height:18px;">
+      <img src="icons/menu.svg" width="18" height="18" alt="">
+    </span>
+  </button>
+
+  <div id="topbar-breadcrumb">
+    <span id="topbar-app-name">BE Function Generator</span>
+
+    <button id="topbar-home-btn" class="hidden">
+      <span class="icon icon-muted" style="width:13px;height:13px;">
+        <img src="icons/home.svg" width="13" height="13" alt="">
+      </span>
+      ホーム
+    </button>
+
+    <span class="topbar-sep hidden" id="topbar-sep">›</span>
+    <span id="topbar-proj-name" class="hidden"></span>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main id="main">
+
+  <!-- HOME SCREEN -->
+  <div id="home-screen" class="visible">
+    <div class="home-hero">
+      <div class="home-badge">
+        <span class="icon icon-muted" style="width:12px;height:12px;">
+          <img src="icons/pickaxe.svg" width="12" height="12" alt="">
+        </span>
+        Minecraft Bedrock Edition
+      </div>
+      <h1>Function <em>Generator</em></h1>
+      <p>ビヘイビアパックの Function ファイルを<br>簡単に作成・管理・エクスポートできるツールです。</p>
+      <div class="home-actions">
+        <button class="btn-primary" id="home-new-btn">
+          <span class="icon icon-text" style="width:14px;height:14px;">
+            <img src="icons/plus.svg" width="14" height="14" alt="">
+          </span>
+          新規プロジェクト
+        </button>
+      </div>
+    </div>
+
+    <div id="home-projects-section" class="hidden" style="width:100%;max-width:900px;">
+      <div class="home-section-label">プロジェクト一覧</div>
+      <div class="projects-grid" id="home-projects-grid"></div>
+    </div>
+
+    <div id="home-empty" class="empty-state">
+      <div class="empty-state-icon">
+        <span class="icon icon-muted" style="width:48px;height:48px;">
+          <img src="icons/pack-default.svg" width="48" height="48" alt="">
+        </span>
+      </div>
+      <p>まだプロジェクトがありません。<br>「新規プロジェクト」から始めましょう！</p>
+    </div>
+  </div>
+
+  <!-- EDITOR SCREEN -->
+  <div id="editor-screen">
+    <!-- Tabs -->
+    <div class="editor-tabs">
+      <div class="editor-tab active" data-tab="info">
+        <span class="icon" style="width:14px;height:14px;">
+          <img src="icons/info.svg" width="14" height="14" alt="">
+        </span>
+        基本情報
+      </div>
+      <div class="editor-tab" data-tab="functions">
+        <span class="icon" style="width:14px;height:14px;">
+          <img src="icons/function.svg" width="14" height="14" alt="">
+        </span>
+        Function
+      </div>
+      <div class="editor-tab" data-tab="export">
+        <span class="icon" style="width:14px;height:14px;">
+          <img src="icons/export.svg" width="14" height="14" alt="">
+        </span>
+        エクスポート
+      </div>
+    </div>
+
+    <!-- Split body -->
+    <div class="editor-body" id="editor-body">
+
+      <!-- LEFT PANEL -->
+      <div class="panel-left" id="panel-left" style="width:55%;">
+
+        <!-- INFO TAB -->
+        <div id="tab-info" class="tab-content">
+          <div class="form-section">
+            <div class="form-section-title">
+              <span class="icon icon-muted" style="width:13px;height:13px;">
+                <img src="icons/info.svg" width="13" height="13" alt="">
+              </span>
+              パック基本情報
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="proj-name">パック名<span class="req">*</span></label>
+              <input type="text" class="form-input" id="proj-name" placeholder="My Behavior Pack" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="proj-desc">説明</label>
+              <textarea class="form-textarea" id="proj-desc" placeholder="パックの説明を入力してください..." rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">アイコン</label>
+              <div class="icon-upload-area">
+                <div class="icon-preview-box" id="icon-preview-box" role="button" tabindex="0" aria-label="アイコン画像を選択">
+                  <span class="icon icon-muted" id="icon-default-icon" style="width:28px;height:28px;">
+                    <img src="icons/pack-default.svg" width="28" height="28" alt="">
+                  </span>
+                </div>
+                <div>
+                  <input type="file" id="icon-file" accept="image/*" style="display:none" aria-label="アイコンファイル">
+                  <button class="btn-secondary" id="icon-select-btn">
+                    <span class="icon icon-muted" style="width:13px;height:13px;">
+                      <img src="icons/image.svg" width="13" height="13" alt="">
+                    </span>
+                    画像を選択
+                  </button>
+                  <div class="icon-hint">推奨: 64×64px PNG</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="form-section-title">
+              <span class="icon icon-muted" style="width:13px;height:13px;">
+                <img src="icons/version.svg" width="13" height="13" alt="">
+              </span>
+              バージョン設定
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">パックのバージョン</label>
+                <div class="version-box" id="ver-box">
+                  <input type="number" class="vseg" id="ver-major" value="1" min="0" max="99" aria-label="メジャーバージョン">
+                  <span class="vdot">.</span>
+                  <input type="number" class="vseg" id="ver-minor" value="0" min="0" max="99" aria-label="マイナーバージョン">
+                  <span class="vdot">.</span>
+                  <input type="number" class="vseg" id="ver-patch" value="0" min="0" max="99" aria-label="パッチバージョン">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">最小エンジンバージョン<span class="req">*</span></label>
+                <div class="version-box" id="eng-box">
+                  <input type="number" class="vseg" id="eng-major" value="1"  min="1" max="99" aria-label="エンジンメジャー">
+                  <span class="vdot">.</span>
+                  <input type="number" class="vseg" id="eng-minor" value="26" min="0" max="99" aria-label="エンジンマイナー">
+                  <span class="vdot">.</span>
+                  <input type="number" class="vseg" id="eng-patch" value="30" min="0" max="99" aria-label="エンジンパッチ">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!-- /tab-info -->
+
+        <!-- FUNCTION TAB -->
+        <div id="tab-functions" class="tab-content hidden">
+          <div class="functions-toolbar">
+            <button class="btn-primary" id="add-func-btn" style="font-size:13px;padding:8px 14px;">
+              <span class="icon icon-text" style="width:13px;height:13px;">
+                <img src="icons/plus.svg" width="13" height="13" alt="">
+              </span>
+              関数を追加
+            </button>
+            <button class="btn-secondary" id="add-folder-btn">
+              <span class="icon icon-muted" style="width:13px;height:13px;">
+                <img src="icons/folder.svg" width="13" height="13" alt="">
+              </span>
+              フォルダを追加
+            </button>
+          </div>
+          <div class="functions-list" id="functions-list">
+            <div class="empty-state" id="func-empty">
+              <div class="empty-state-icon">
+                <span class="icon icon-muted" style="width:40px;height:40px;">
+                  <img src="icons/function.svg" width="40" height="40" alt="">
+                </span>
+              </div>
+              <p>まだ関数がありません。<br>「関数を追加」から作成しましょう！</p>
+            </div>
+          </div>
+        </div><!-- /tab-functions -->
+
+        <!-- EXPORT TAB -->
+        <div id="tab-export" class="tab-content hidden">
+          <div class="export-section">
+            <div class="export-card">
+              <h3>パックをエクスポート</h3>
+              <p>作成した Function パックをダウンロードします。形式を選択してください。</p>
+
+              <div class="export-options">
+                <label class="radio-opt sel" id="opt-mcaddon">
+                  <input type="radio" name="export-fmt" value="mcaddon" checked>
+                  <div class="radio-dot"></div>
+                  <span class="icon icon-muted" style="width:16px;height:16px;">
+                    <img src="icons/mcaddon.svg" width="16" height="16" alt="">
+                  </span>
+                  <div>
+                    <div style="font-weight:600;font-size:13px;">.mcaddon</div>
+                    <div style="font-size:11px;color:var(--text3);">Minecraftで直接開けます</div>
+                  </div>
+                </label>
+
+                <label class="radio-opt" id="opt-zip">
+                  <input type="radio" name="export-fmt" value="zip">
+                  <div class="radio-dot"></div>
+                  <span class="icon icon-muted" style="width:16px;height:16px;">
+                    <img src="icons/zip.svg" width="16" height="16" alt="">
+                  </span>
+                  <div>
+                    <div style="font-weight:600;font-size:13px;">.zip</div>
+                    <div style="font-size:11px;color:var(--text3);">汎用 ZIP アーカイブ</div>
+                  </div>
+                </label>
+              </div>
+
+              <div class="export-tree" id="export-tree">パックの内容がここに表示されます...</div>
+
+              <div style="margin-top:14px;">
+                <button class="btn-export" id="export-btn">
+                  <span class="icon icon-text" style="width:15px;height:15px;">
+                    <img src="icons/download.svg" width="15" height="15" alt="">
+                  </span>
+                  ダウンロード
+                </button>
+              </div>
+            </div>
+          </div>
+        </div><!-- /tab-export -->
+
+      </div><!-- /panel-left -->
+
+      <!-- RESIZE HANDLE -->
+      <div id="resize-handle" role="separator" aria-orientation="vertical" aria-label="パネル幅を変更"></div>
+
+      <!-- RIGHT PANEL (preview) -->
+      <div class="panel-right" id="panel-right" style="flex:1;">
+        <div class="panel-right-header">
+          <div class="panel-right-label">
+            <span class="icon icon-muted" style="width:11px;height:11px;">
+              <img src="icons/preview.svg" width="11" height="11" alt="">
+            </span>
+            プレビュー
+          </div>
+          <div class="panel-right-fname" id="preview-filename">manifest.json</div>
+        </div>
+        <div class="panel-right-content">
+          <pre class="code-block" id="preview-code"></pre>
+        </div>
+      </div>
+
+    </div><!-- /editor-body -->
+  </div><!-- /editor-screen -->
+
+</main><!-- /main -->
+
+<!-- Toast container -->
+<div id="toast-wrap" aria-live="polite"></div>
+
+<!-- JSZip -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
